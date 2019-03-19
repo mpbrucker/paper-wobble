@@ -6,12 +6,17 @@ var myPath = new Path.Circle({
 
 var lineText = 'test text';
 var textObjects = [];
-console.log(myPath.length);
 
 for (var i = 0; i < lineText.length; i++) {
     textObjects.push(new PointText(myPath.getPointAt(i*100)));
+    // console.log(textObjects[i].bounds.topLeft);
+    // textObjects[i].bounds.selected = true;
     textObjects[i].fontSize = 24;
     textObjects[i].content = lineText.charAt(i);
+
+    
+
+    textObjects[i].pivot = new Point(textObjects[i].bounds.width/2,textObjects[i].bounds.height/2);
 }
 
 var mouseDown = false;
@@ -34,7 +39,10 @@ project.view.onMouseMove = function(e) {
         }
 
         for (var i = 0; i < textObjects.length; i++) {
+            var normAngle = myPath.getNormalAt(i*100).angle;
+
             textObjects[i].position = myPath.getPointAt(i*100);
+            textObjects[i].rotation = normAngle+90;
         }
     }
 }

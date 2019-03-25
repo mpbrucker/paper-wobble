@@ -12,6 +12,7 @@ function makeWobble(id, text, position, radius) {
 
     var movePoint = circlePath.segments[5].point.clone();
     var expansion, prevAngle, angleDelta;
+    var curAngle = 45;
 
 
     for (var i = 0; i < lineText.length; i++) {
@@ -20,13 +21,13 @@ function makeWobble(id, text, position, radius) {
         textObjects[i].content = lineText.charAt(i);
         // Set correct rotation point for characters
         textObjects[i].pivot = new Point(textObjects[i].bounds.width/2,textObjects[i].bounds.height);
-        updateText(circlePath, textObjects, 45, centerPoint);
+        updateText(circlePath, textObjects, curAngle, centerPoint);
 
     }
 
     project.view.onMouseMove = function(e) {
         var pointDiff = (circlePath.position) - e.point;
-        var curAngle = pointDiff.angle;
+        curAngle = pointDiff.angle;
 
         // Initial rotation to position the point in the correct position
         angleDelta = prevAngle == null ? curAngle-45 : curAngle-prevAngle;
@@ -40,6 +41,12 @@ function makeWobble(id, text, position, radius) {
         circlePath.segments[5].point = movePoint*pointRad+centerPoint*(1-pointRad);
         updateText(circlePath, textObjects, curAngle, centerPoint);
         prevAngle = curAngle;
+    }
+
+    project.view.onResize = function(e) {
+        console.log('resize');
+        circlePath.position = view.center;
+        updateText(circlePath, textObjects, curAngle, centerPoint);
     }
         
     /*

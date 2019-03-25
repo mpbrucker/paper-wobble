@@ -1,74 +1,58 @@
-var myPath = project.importSVG(document.getElementById('circle'), {expandShapes: true, applyMatrix: true}).children[0];
-var centerPoint = myPath.bounds.center.clone();
-myPath.pivot = centerPoint;
-myPath.position = view.center;
+var circlePath = project.importSVG(document.getElementById('circle'), {expandShapes: true, applyMatrix: true}).children[0];
+var centerPoint = circlePath.bounds.center.clone();
+circlePath.pivot = centerPoint;
+circlePath.position = view.center;
 var CIRCLERADIUS = 200;
+circlePath.strokeColor = 'black';
 
-// myPath.fullySelected = true;
+
+// circlePath.fullySelected = true;
 // Set the pivot point of the circle so it doesn't change
 
 var lineText = 'MATT BRUCKER COMPUTING+DESIGN  ';
-var CHAROFFSET = myPath.length/lineText.length;
+var CHAROFFSET = circlePath.length/lineText.length;
 var textObjects = [];
 
 for (var i = 0; i < lineText.length; i++) {
-    textObjects.push(new PointText(myPath.getPointAt(0)));
+    textObjects.push(new PointText(circlePath.getPointAt(0)));
     textObjects[i].fontSize = 24;
     textObjects[i].content = lineText.charAt(i);
-
-    
-
+    // Set correct rotation point for characters
     textObjects[i].pivot = new Point(textObjects[i].bounds.width/2,textObjects[i].bounds.height);
-    updateText(myPath, textObjects, 45, centerPoint);
+    updateText(circlePath, textObjects, 45, centerPoint);
 
 }
-var mouseDown = false;
 
-var point = new Point(0,0);
 
-myPath.strokeColor = 'black';
-// myPath.segments[0].handleOut = new Point((Math.random()-.5)*1000, (Math.random()-.5)*1000);
-// myPath.fullySelected = true;
+// circlePath.segments[0].handleOut = new Point((Math.random()-.5)*1000, (Math.random()-.5)*1000);
+// circlePath.fullySelected = true;
 
 var prevAngle = -0.01;
-var totalAngle = 0;
+var movePoint = circlePath.segments[5].point.clone();
+var expansion;
+var angleDelta;
 
-var movePoint = myPath.segments[5].point.clone();
 project.view.onMouseMove = function(e) {
-    // console.log(myPath.bounds.center);
-    // Note that we want to calculate diff from centerPoint, because the center of the bounding box will change
-    var pointDiff = (myPath.position) - e.point;
-    // console.log(pointDiff.length)
+    var pointDiff = (circlePath.position) - e.point;
     var curAngle = pointDiff.angle;
 
+    // Account for negative angles
     if (curAngle < 0) {
         curAngle += 360;
     }
-    if (prevAngle < 0) { // Initial rotation to position the point in the correct position
-        myPath.rotate(curAngle-45);
-    } else {
-        myPath.rotate(curAngle-prevAngle);
-    }
-    totalAngle += curAngle-prevAngle;
-    // console.log(totalAngle);
-    // console.log(pointDiff.length)
 
-    if (pointDiff.length > 100) {
-        var pointRad = Math.min((Math.pow((pointDiff.length-100)*0.05, 2)+100)/CIRCLERADIUS, 1);
-    } else {
-        var pointRad = Math.min((Math.pow((pointDiff.length-100)*0.35, 2)+100)/CIRCLERADIUS, 1)
-    }
-    // console.log(curAngle)
+    // Initial rotation to position the point in the correct position
+    angleDelta = prevAngle < 0 ? curAngle-45 : curAngle-prevAngle;
+    circlePath.rotate(angleDelta);
 
-    myPath.segments[5].point = (movePoint-centerPoint)*pointRad+centerPoint;
+    // Calculate how 
+    expansion = pointDiff.length > 100 ? 0.05 : 0.35;
+    var pointRad = Math.min((Math.pow((pointDiff.length-100)*expansion, 2)+100)/CIRCLERADIUS, 1);
 
-    
-    // console.log(myPath.length)
-    if (e.delta !== null) {
-        updateText(myPath, textObjects, curAngle, centerPoint);
-    }
-        prevAngle = curAngle;
-
+    // Move the "wobble" point
+    circlePath.segments[5].point = movePoint*pointRad+centerPoint*(1-pointRad);
+    updateText(circlePath, textObjects, curAngle, centerPoint);
+    prevAngle = curAngle;
 }
     
 /*

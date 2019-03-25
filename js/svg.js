@@ -1,51 +1,27 @@
 var myPath = project.importSVG(document.getElementById('circle'), {expandShapes: true, applyMatrix: true}).children[0];
 var centerPoint = myPath.bounds.center.clone();
 myPath.pivot = centerPoint;
-console.log(myPath)
-// console.log(centerPoint)
 myPath.position = view.center;
-// myPath.reverse();
-// console.log(myPath.position);
-// console.log(myPath.segments)
-
-// myPath.fullySelected = true;
-
 var CIRCLERADIUS = 200;
-
-var myPath2 = new Path.Circle({
-    center: view.center,
-    radius: CIRCLERADIUS
-});
-console.log(myPath2)
 
 // myPath.fullySelected = true;
 // Set the pivot point of the circle so it doesn't change
 
-var lineText = 'test text';
-var charOffset = myPath.length/lineText.length;
+var lineText = 'MATT BRUCKER COMPUTING+DESIGN  ';
+var CHAROFFSET = myPath.length/lineText.length;
 var textObjects = [];
 
 for (var i = 0; i < lineText.length; i++) {
-    textObjects.push(new PointText(myPath.getPointAt(i*100)));
-    // console.log(textObjects[i].bounds.topLeft);
-    // textObjects[i].bounds.selected = true;
+    textObjects.push(new PointText(myPath.getPointAt(0)));
     textObjects[i].fontSize = 24;
     textObjects[i].content = lineText.charAt(i);
 
     
 
     textObjects[i].pivot = new Point(textObjects[i].bounds.width/2,textObjects[i].bounds.height);
-    textObjects[i].position = myPath.getPointAt(i*100)+(myPath.position-centerPoint);
+    updateText(myPath, textObjects, 45, centerPoint);
+
 }
-
-// Add a new point for "wobble" effect
-// var newSeg = new Segment(myPath.getLocationAt(myPath.length/8));
-// newSeg.selected = true;
-// newSeg.handleIn = new Point(-40, 40);
-// newSeg.handleOut = new Point(40, -40);
-// myPath.insertSegment(1, newSeg);
-// myPath.smooth();
-
 var mouseDown = false;
 
 var point = new Point(0,0);
@@ -80,7 +56,7 @@ project.view.onMouseMove = function(e) {
     if (pointDiff.length > 100) {
         var pointRad = Math.min((Math.pow((pointDiff.length-100)*0.05, 2)+100)/CIRCLERADIUS, 1);
     } else {
-        var pointRad = Math.min((Math.pow((pointDiff.length-100)*0.25, 2)+100)/CIRCLERADIUS, 1)
+        var pointRad = Math.min((Math.pow((pointDiff.length-100)*0.35, 2)+100)/CIRCLERADIUS, 1)
     }
     // console.log(curAngle)
 
@@ -89,22 +65,26 @@ project.view.onMouseMove = function(e) {
     
     // console.log(myPath.length)
     if (e.delta !== null) {
-
-        for (var i = 0; i < textObjects.length; i++) {
-            var curPos = (i*100) - ((curAngle/360)*myPath.length);
-            if (curPos > myPath.length) {
-                curPos = curPos % myPath.length;
-            } else if (curPos < 0) {
-                curPos += myPath.length;
-            }
-
-            var normAngle = myPath.getNormalAt(curPos).angle;
-            console.log(myPath.getLocationAt(curPos).point)
-            textObjects[i].position = myPath.getPointAt(curPos).rotate(curAngle-45, centerPoint)+(myPath.position-centerPoint);
-            textObjects[i].rotation = normAngle+45+curAngle;
-        }
+        updateText(myPath, textObjects, curAngle, centerPoint);
     }
         prevAngle = curAngle;
 
 }
     
+/*
+    Updates the positions of the text objects on the given path.
+*/
+function updateText (path, characters, angle, center) {
+    for (var i = 0; i < characters.length; i++) {
+        var curPos = (i*CHAROFFSET) - ((angle/360)*path.length);
+        if (curPos > path.length) {
+            curPos = curPos % path.length;
+        } else if (curPos < 0) {
+            curPos += path.length;
+        }
+
+        var normAngle = path.getNormalAt(curPos).angle;
+        characters[i].position = path.getPointAt(curPos).rotate(angle-45, center)+(path.position-center);
+        characters[i].rotation = normAngle+45+angle;
+    }
+}

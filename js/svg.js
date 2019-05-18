@@ -69,3 +69,7 @@ function makeWobble(id, text, position, radius) {
 }
 
 makeWobble('circle', 'MATT BRUCKER COMPUTING+DESIGN  ', view.center, 200)
+
+document.onscroll = function(e) {
+    console.log(e);
+}

@@ -1,29 +1,34 @@
-var leftEndpoint = new Point(100,500);
-var rightEndpoint = new Point(500, 500);
-var topEndpoint = new Point(300, 300);
-var bottomEndpoint = new Point(300, 700);
+console.log(view.center);
 
-var horizPath = new Path({segments: [leftEndpoint, rightEndpoint], strokeColor: 'black', strokeWidth: 6, strokeCap: 'round'});
-var vertPath = new Path({segments: [topEndpoint, bottomEndpoint], strokeColor: 'black', strokeWidth: 6, strokeCap: 'round'});
+var axes = genAxes(project.view.center, 750);
 
-horizPath.strokeColor = 'black';
-vertPath.strokeColor = 'black';
+project.view.onResize = function() {
+    axes.position = project.view.center;
+}
 
+function genAxes(centerPoint, size) {
+    var offset=size/2;
 
-var numPoints = randInt(0,4);
-addPoints(horizPath, numPoints, 10);
-addPoints(vertPath, numPoints, 10);
+    var leftEndpoint = new Point(centerPoint.x-offset,centerPoint.y);
+    var rightEndpoint = new Point(centerPoint.x+offset, centerPoint.y);
+    var topEndpoint = new Point(centerPoint.x, centerPoint.y-offset);
+    var bottomEndpoint = new Point(centerPoint.x, centerPoint.y+offset);
 
-horizPath.smooth();
-vertPath.smooth();
+    var horizPath = new Path({segments: [leftEndpoint, rightEndpoint], strokeColor: 'black', strokeWidth: 6, strokeCap: 'round'});
+    var vertPath = new Path({segments: [topEndpoint, bottomEndpoint], strokeColor: 'black', strokeWidth: 6, strokeCap: 'round'});
 
-genArrow(leftEndpoint, 15, 180);
-genArrow(rightEndpoint, 15, 0);
-
-genArrow(topEndpoint, 15, 270);
-genArrow(bottomEndpoint, 15, 90);
+    horizPath.strokeColor = 'black';
+    vertPath.strokeColor = 'black';
 
 
+    addPoints(horizPath, randInt(0,4), 10);
+    addPoints(vertPath, randInt(0,4), 10);
+
+    horizPath.smooth();
+    vertPath.smooth();
+
+    return new Group([horizPath, vertPath, genArrow(leftEndpoint, 15, 180), genArrow(rightEndpoint, 15, 0), genArrow(topEndpoint, 15, 270), genArrow(bottomEndpoint, 15, 90)]);
+}
 
 // Adds up to numPoints randomly-generated points to the path
 function addPoints(path, numPoints, limit) {
@@ -40,10 +45,11 @@ function addPoints(path, numPoints, limit) {
 
 // Draws an arrow path of a certain size and offset from a line endpoint. 
 function genArrow(endpoint, size, rotation) {
-    var arrow = new Path([new Point(0,0), new Point(size/2, size/2), new Point(0, size)]);
+    var arrow = new Path({segments: [new Point(0,0), new Point(size/2, size/2), new Point(0, size)], strokeColor: 'black', strokeWidth: 6, strokeCap: 'round', strokeJoin: 'round'});
     arrow.rotation = rotation;  
     arrow.position = endpoint;
     arrow.strokeColor = 'black';
+    return arrow
 }
 
 function randInt(min,max) {

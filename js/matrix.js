@@ -2,6 +2,25 @@ console.log(view.center);
 
 var axes = genAxes(project.view.center, 750);
 
+project.view.onClick = function() {
+    console.log('click');
+    console.log(axes.children);
+
+    // Move the middle points in the axes
+    for (var j = 0; j < 2; j++) {
+        var origPath = axes.children[j];
+        var numPoints = origPath.segments.length;
+        var newPath = new Path([origPath.segments[0].point, origPath.segments[numPoints-1].point]);
+        addPoints(newPath, numPoints-2, 10);
+        var tween = {};
+        for (var i = 1; i < numPoints-1; i++) {
+            var tweenString = 'segments[' + i.toString() + '].point';
+            tween[tweenString] = newPath.segments[i].point;
+        }
+        origPath.tweenTo(tween, 100);
+    }
+}
+
 project.view.onResize = function() {
     axes.position = project.view.center;
 }
@@ -15,6 +34,7 @@ function genAxes(centerPoint, size) {
     var bottomEndpoint = new Point(centerPoint.x, centerPoint.y+offset);
 
     var horizPath = new Path({segments: [leftEndpoint, rightEndpoint], strokeColor: 'black', strokeWidth: 6, strokeCap: 'round'});
+    horizPath.fullySelected = true;
     var vertPath = new Path({segments: [topEndpoint, bottomEndpoint], strokeColor: 'black', strokeWidth: 6, strokeCap: 'round'});
 
     horizPath.strokeColor = 'black';

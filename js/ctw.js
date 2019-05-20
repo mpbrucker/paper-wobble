@@ -1,4 +1,7 @@
-var text = project.importSVG(document.getElementById('text'), {expandShapes: true}).children[1];
+var ctw = project.importSVG(document.getElementById('text'), {expandShapes: true});
+// ctw.scale(5);
+
+var text = ctw.children[1];
 
 project.view.onMouseMove = function(e) {
     // console.log(e.point);
@@ -7,7 +10,8 @@ project.view.onMouseMove = function(e) {
             var segment = text.children[i].segments[j];
             var delta = e.point - segment.point;
             if (delta.length < 50) {
-                segment.point -= delta*0.01;
+                var normal = delta.rotate(100);
+                segment.point -= normal*0.1;
             }
             
         }

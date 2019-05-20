@@ -2,10 +2,22 @@
 var axes = genAxes(project.view.center, 750);
 
 var points = {'design': [{x: 50, y: 50}, {x: -20, y: 30}], 'computing': [{x: -100, y: 250}, {x: 200, y: 30}]};
+// Default keyword to use
+var orig = 'design';
 var pointPaths = [];
 
-for (var k = 0; k < points.length; k++) {
-    pointPaths.push(new Path.Circle({center: new Point(points[k].x, -points[k].y)+axes.bounds.center, radius: 40, strokeColor: 'black', strokeWidth: 3}))
+for (var k = 0; k < points[orig].length; k++) {
+    pointPaths.push(new Path.Circle({center: new Point(points[orig][k].x, -points[orig][k].y)+axes.bounds.center, radius: 40, strokeColor: 'black', strokeWidth: 3}))
+}
+
+document.getElementById('computing').onclick = function() {tweenCircles('computing')};
+document.getElementById('design').onclick = function() {tweenCircles('design')};
+
+function tweenCircles(keyword) {
+    var tween = {};
+    for (var i=0;i<pointPaths.length;i++) {
+        pointPaths[i].tweenTo({'position.x': points[keyword][i].x+axes.bounds.center.x, 'position.y': points[keyword][i].y+axes.bounds.center.y}, 200);
+    }
 }
 
 project.view.onClick = function() {

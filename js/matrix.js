@@ -1,15 +1,21 @@
-console.log(view.center);
 
 var axes = genAxes(project.view.center, 750);
 
+var points = {'design': [{x: 50, y: 50}, {x: -20, y: 30}], 'computing': [{x: -100, y: 250}, {x: 200, y: 30}]};
+var pointPaths = [];
+
+for (var k = 0; k < points.length; k++) {
+    pointPaths.push(new Path.Circle({center: new Point(points[k].x, -points[k].y)+axes.bounds.center, radius: 40, strokeColor: 'black', strokeWidth: 3}))
+}
+
 project.view.onClick = function() {
-    console.log('click');
-    console.log(axes.children);
 
     // Move the middle points in the axes
     for (var j = 0; j < 2; j++) {
         var origPath = axes.children[j];
         var numPoints = origPath.segments.length;
+
+        // Generate a "new" version of the original axes, with different randomly generated points in the middle
         var newPath = new Path([origPath.segments[0].point, origPath.segments[numPoints-1].point]);
         addPoints(newPath, numPoints-2, 10);
         var tween = {};
@@ -17,7 +23,7 @@ project.view.onClick = function() {
             var tweenString = 'segments[' + i.toString() + '].point';
             tween[tweenString] = newPath.segments[i].point;
         }
-        origPath.tweenTo(tween, 100);
+        origPath.tweenTo(tween, 200);
     }
 }
 
@@ -34,15 +40,15 @@ function genAxes(centerPoint, size) {
     var bottomEndpoint = new Point(centerPoint.x, centerPoint.y+offset);
 
     var horizPath = new Path({segments: [leftEndpoint, rightEndpoint], strokeColor: 'black', strokeWidth: 6, strokeCap: 'round'});
-    horizPath.fullySelected = true;
+    // horizPath.fullySelected = true;
     var vertPath = new Path({segments: [topEndpoint, bottomEndpoint], strokeColor: 'black', strokeWidth: 6, strokeCap: 'round'});
 
     horizPath.strokeColor = 'black';
     vertPath.strokeColor = 'black';
 
 
-    addPoints(horizPath, randInt(0,4), 10);
-    addPoints(vertPath, randInt(0,4), 10);
+    addPoints(horizPath, randInt(1,4), 10);
+    addPoints(vertPath, randInt(1,4), 10);
 
     horizPath.smooth();
     vertPath.smooth();

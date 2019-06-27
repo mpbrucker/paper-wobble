@@ -9,9 +9,13 @@ project.view.onMouseMove = function(e) {
         for (var j=0;j<text.children[i].segments.length;j++) {
             var segment = text.children[i].segments[j];
             var delta = e.point - segment.point;
-            if (delta.length < 50) {
+
+            var handleDelta = e.point - segment.handleOut;
+
+            if (delta.length < 75) {
                 var normal = delta.rotate(100);
-                segment.point -= normal*0.1;
+                segment.point -= normal*0.01;
+                // segment.handleOut -= handleDelta.rotate(100)*0.1;
             }
             
         }

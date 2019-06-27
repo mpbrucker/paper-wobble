@@ -11,3 +11,10 @@ canvas {
     top: 0px;
     left: 0px;
 }
+
+.circle {
+    width: 750px;
+    height: 0px;
+    border-radius: 50%;
+    background-color: #aaaaaa;
+}

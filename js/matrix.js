@@ -21,12 +21,10 @@ var topVar = 50;
 var offsetFunction = function(data) {
     data.offsets.popper.left = leftVar;
     data.offsets.popper.top = topVar;
-    console.log(data.offsets.popper)
     return data;
-    console.log(leftVar)
 }
 
-var testPosition = { getBoundingClientRect: function() { return { width: 0, height: 0, left: leftVar, top: topVar, bottom: topVar, right: leftVar }} }
+var testPosition = { getBoundingClientRect: function() { return { width: 40, height: 40, left: leftVar, top: topVar, bottom: topVar, right: leftVar }} }
 
 var pop = new Popper(testPosition, document.getElementById('pop'), { 
     placement: 'bottom',
@@ -36,20 +34,18 @@ var pop = new Popper(testPosition, document.getElementById('pop'), {
 });
 
 
-
-// console.log(pop.modifiers)
-// console.log(pop)
-
-// pop['1'].offset = "200px, 50px";
-
-
 function tweenCircles(keyword) {
-    leftVar -= 4;
-    topVar += 3;
+    leftVar = points[keyword][0].x+axes.bounds.center.x;
+    topVar = points[keyword][0].y+axes.bounds.center.y;
     pop.update();
     var tween = {};
     for (var i=0;i<pointPaths.length;i++) {
-        pointPaths[i].tweenTo({'position.x': points[keyword][i].x+axes.bounds.center.x, 'position.y': points[keyword][i].y+axes.bounds.center.y}, 200, easing='easeInOut');
+        pointPaths[i].tweenTo({
+            'position.x': points[keyword][i].x+axes.bounds.center.x, 
+            'position.y': points[keyword][i].y+axes.bounds.center.y}, 
+            200, 
+            { easing: 'easeInOutCubic' }
+        ).onUpdate = function(event) {console.log(event)};;
     }
 }
 

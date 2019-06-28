@@ -26,8 +26,12 @@ function genCircleWithPopper(origin) {
         strokeColor: 'black',
         strokeWidth: 3,
     });
-    var pop = new Popper(function() { return circ.bounds; }, document.getElementById('pop'), {
-    })
+    var pop = new Popper({ getBoundingClientRect: function() { return circ.bounds; } }, document.getElementById('pop'), {
+        placement: 'right-start',
+        onUpdate: function(data) {
+            console.log(data.styles);
+        },
+    });
     allPoppers.push(pop);
     return circ;
 }
@@ -57,19 +61,17 @@ var topVar = 50;
 // console.log(pointPaths[0].bounds)
 
 function tweenCircles(keyword) {
-    for (var i=0;i<allPoppers.length; i++) {
-        allPoppers[i].update;    
-    }
-
     var tween = {};
     for (var i=0;i<pointPaths.length;i++) {
-        console.log(pointPaths[i].position);
         pointPaths[i].tweenTo({
-            'position.x': points[keyword][i].x+axes.bounds.center.x, 
-            'position.y': points[keyword][i].y+axes.bounds.center.y}, 
+                'position.x': points[keyword][i].x+axes.bounds.center.x, 
+                'position.y': points[keyword][i].x+axes.bounds.center.y,
+            }, 
             300, 
             { easing: 'easeInOutQuartic' }
-        ).onUpdate = function(event) {};
+        ).onUpdate = function(event) {
+            allPoppers[0].update();
+        };
     }
 }
 

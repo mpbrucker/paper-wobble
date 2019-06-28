@@ -18,6 +18,7 @@ newCirc.onMouseEnter = function(event) {
     popperVis = 'visible';
     allPoppers[0].update();
 }
+
 newCirc.onMouseLeave = function(event) {
     popperVis = 'hidden';
     allPoppers[0].update();
@@ -30,6 +31,7 @@ function genCircleWithPopper(origin) {
         center: origin,
         radius: 40, // TODO make this programmatic
         strokeColor: 'black',
+        fillColor: 'black',
         strokeWidth: 3,
     });
     var pop = new Popper({ getBoundingClientRect: function() { return circ.bounds; } }, document.getElementById('pop'), {

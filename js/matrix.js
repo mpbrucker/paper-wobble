@@ -11,13 +11,19 @@ var pointPaths = [];
 // }
 
 allPoppers = [];
+popperVis = 'visible';
 
 var newCirc = genCircleWithPopper(new Point(points[orig][0].x, -points[orig][0].y)+axes.bounds.center);
+newCirc.onMouseEnter = function(event) {
+    popperVis = 'visible';
+    allPoppers[0].update();
+}
+newCirc.onMouseLeave = function(event) {
+    popperVis = 'hidden';
+    allPoppers[0].update();
+}
 console.log(newCirc);
 pointPaths.push(newCirc);
-
-console.log(pointPaths[0])
-
 
 function genCircleWithPopper(origin) {
     var circ = new Path.Circle({
@@ -28,7 +34,18 @@ function genCircleWithPopper(origin) {
     });
     var pop = new Popper({ getBoundingClientRect: function() { return circ.bounds; } }, document.getElementById('pop'), {
         placement: 'right-start',
+        modifiers: {
+            visibility: {
+                order: 875,
+                enabled: true,
+                fn: function(data) {
+                    data.styles.visibility = popperVis;
+                    return data;
+                }
+            }
+        },
         onUpdate: function(data) {
+            data.styles.visibility = 'hidden';
             console.log(data.styles);
         },
     });

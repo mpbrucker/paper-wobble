@@ -6,9 +6,32 @@ var points = {'design': [{x: 50, y: 50}, {x: -20, y: 30}], 'computing': [{x: -10
 var orig = 'design';
 var pointPaths = [];
 
-for (var k = 0; k < points[orig].length; k++) {
-    pointPaths.push(new Path.Circle({center: new Point(points[orig][k].x, -points[orig][k].y)+axes.bounds.center, radius: 40, strokeColor: 'black', strokeWidth: 3}))
+// for (var k = 0; k < points[orig].length; k++) {
+//     pointPaths.push(new Path.Circle({center: new Point(points[orig][k].x, -points[orig][k].y)+axes.bounds.center, radius: 40, strokeColor: 'black', strokeWidth: 3}))
+// }
+
+allPoppers = [];
+
+var newCirc = genCircleWithPopper(new Point(points[orig][0].x, -points[orig][0].y)+axes.bounds.center);
+console.log(newCirc);
+pointPaths.push(newCirc);
+
+console.log(pointPaths[0])
+
+
+function genCircleWithPopper(origin) {
+    var circ = new Path.Circle({
+        center: origin,
+        radius: 40, // TODO make this programmatic
+        strokeColor: 'black',
+        strokeWidth: 3,
+    });
+    var pop = new Popper(function() { return circ.bounds; }, document.getElementById('pop'), {
+    })
+    allPoppers.push(pop);
+    return circ;
 }
+
 
 
 document.getElementById('computing').onclick = function() {tweenCircles('computing')};
@@ -18,34 +41,35 @@ document.getElementById('design').onclick = function() {tweenCircles('design')};
 var leftVar = 200;
 var topVar = 50;
 
-var offsetFunction = function(data) {
-    data.offsets.popper.left = leftVar;
-    data.offsets.popper.top = topVar;
-    return data;
-}
 
-var testPosition = { getBoundingClientRect: function() { return { width: 40, height: 40, left: leftVar, top: topVar, bottom: topVar, right: leftVar }} }
+// var testPosition = { getBoundingClientRect: function() { return { width: 40, height: 40, left: leftVar, top: topVar, bottom: topVar, right: leftVar }} }
 
-var pop = new Popper(testPosition, document.getElementById('pop'), { 
-    placement: 'bottom',
-    onUpdate: function(data) {
-        console.log(data.offsets.popper);
-    },
-});
+// var pop = new Popper(testPosition, document.getElementById('pop'), { 
+//     placement: 'bottom',
+//     // onUpdate: function(data) {
+//     //     console.log(data.offsets.popper);
+//     // },
+// });
 
+
+
+
+// console.log(pointPaths[0].bounds)
 
 function tweenCircles(keyword) {
-    leftVar = points[keyword][0].x+axes.bounds.center.x;
-    topVar = points[keyword][0].y+axes.bounds.center.y;
-    pop.update();
+    for (var i=0;i<allPoppers.length; i++) {
+        allPoppers[i].update;    
+    }
+
     var tween = {};
     for (var i=0;i<pointPaths.length;i++) {
+        console.log(pointPaths[i].position);
         pointPaths[i].tweenTo({
             'position.x': points[keyword][i].x+axes.bounds.center.x, 
             'position.y': points[keyword][i].y+axes.bounds.center.y}, 
-            200, 
-            { easing: 'easeInOutCubic' }
-        ).onUpdate = function(event) {console.log(event)};;
+            300, 
+            { easing: 'easeInOutQuartic' }
+        ).onUpdate = function(event) {};
     }
 }
 

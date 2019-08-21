@@ -4,6 +4,7 @@
     <script type="text/javascript" src="https://unpkg.com/popper.js"></script>
     <script type="text/paperscript" src="/js/matrix.js" canvas="matrix"></script>
     <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/popper.css">
 </head>
 
 
@@ -15,7 +16,10 @@
     <button id="computing">Computing</button>
     <button id="design">Design</button>
     <div class="circle" id="circle1">CIRCLE</div>
-    <div id="pop" class="popper">TEST</div>
+    <div id="pop" class="popper">
+        <p>TEST</p>
+        <div class="popper__arrow"></div>
+    </div>
     <canvas id="matrix" resize style="z-index: -1"></canvas>
 </body>
 </html>

@@ -11,7 +11,7 @@ var pointPaths = [];
 // }
 
 allPoppers = [];
-popperVis = 'visible';
+popperVis = 'hidden';
 
 var newCirc = genCircleWithPopper(new Point(points[orig][0].x, -points[orig][0].y)+axes.bounds.center);
 newCirc.onMouseEnter = function(event) {
@@ -65,20 +65,6 @@ var leftVar = 200;
 var topVar = 50;
 
 
-// var testPosition = { getBoundingClientRect: function() { return { width: 40, height: 40, left: leftVar, top: topVar, bottom: topVar, right: leftVar }} }
-
-// var pop = new Popper(testPosition, document.getElementById('pop'), { 
-//     placement: 'bottom',
-//     // onUpdate: function(data) {
-//     //     console.log(data.offsets.popper);
-//     // },
-// });
-
-
-
-
-// console.log(pointPaths[0].bounds)
-
 function tweenCircles(keyword) {
     var tween = {};
     for (var i=0;i<pointPaths.length;i++) {
@@ -89,7 +75,9 @@ function tweenCircles(keyword) {
             300, 
             { easing: 'easeInOutQuartic' }
         ).onUpdate = function(event) {
-            allPoppers[0].update();
+            if (i < allPoppers.length) {
+                allPoppers[i].update();
+            }
         };
     }
 }
